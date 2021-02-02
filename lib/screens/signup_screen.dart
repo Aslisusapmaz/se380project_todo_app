@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:se380_project_todo_app/models/authentication.dart';
+import 'home_screen.dart';
 class SignupScreen extends StatefulWidget {
   static const routeName='/signup';
   @override
@@ -9,9 +12,45 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final GlobalKey<FormState> _formKey=GlobalKey();
   TextEditingController _passwordController= new TextEditingController();
-  void _done()
-  {
+  Map<String, String>_authData={
+    'email':'',
+    'password':''
+  };
+  void _showErrorDialog(String message){
+    showDialog(context:context,
+        builder: (context)=>AlertDialog(
+          title: Text('An Error Occured'),
+          content:Text(message),
+          actions:<Widget> [
+            FlatButton(
+              child: Text('Okay'),
+              onPressed: (){
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        )
+    );
+  }
 
+  Future<void> _done() async
+  {
+  if(!_formKey.currentState.validate())
+    {
+      return;
+    }
+  _formKey.currentState.save();
+  try{
+    await Provider.of<Authentication>(context,listen:false).signup(
+        _authData['email'],
+        _authData['password']
+    );
+    Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+  }catch(error)
+  {
+    var errorMessage='Authentication Failed. Please try again later.';
+    _showErrorDialog(errorMessage);
+  }
   }
   @override
   Widget build(BuildContext context) {
@@ -74,6 +113,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           },
                           onSaved: (value)
                           {
+                            _authData['email']=value;
 
                           },
 
@@ -94,6 +134,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             },
                             onSaved:(value)
                             {
+                              _authData['password']=value;
 
                             }
                         ),

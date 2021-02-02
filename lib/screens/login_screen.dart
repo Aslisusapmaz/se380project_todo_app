@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'signup_screen.dart';
+import 'package:provider/provider.dart';
+import '../models/authentication.dart';
+import 'home_screen.dart';
 class LoginScreen extends StatefulWidget {
   static const routeName='/login';
   @override
@@ -7,11 +10,45 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final GlobalKey<FormState> _formKey=GlobalKey();
-  void _done()
-  {
+  final GlobalKey<FormState> _formKey = GlobalKey();
+  Map<String ,String> _authData={
+'email':'',
+    'password':''
 
+  };
+  void _showErrorDialog(String message){
+    showDialog(context:context,
+      builder: (context)=>AlertDialog(
+        title: Text('An Error Occured'),
+        content:Text(message),
+        actions:<Widget> [
+          FlatButton(
+              child: Text('Okay'),
+            onPressed: (){
+                Navigator.of(context).pop();
+            },
+          )
+        ],
+      )
+    );
   }
+
+  Future<void> _done() async{
+    if (!_formKey.currentState.validate())
+    {
+      return;
+    }
+    _formKey.currentState.save();
+    try{
+      await Provider.of<Authentication>(context,listen:false).login(_authData['email'], _authData['password']);
+      Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+    }catch(error)
+    {
+        var errorMessage='Authentication Failed. Please try again later.';
+        _showErrorDialog(errorMessage);
+    }
+
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                },
                           onSaved: (value)
                               {
-
+                              _authData['email']=value;
                           },
 
                         ),
@@ -92,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                                      onSaved:(value)
                             {
-
+                       _authData['password']=value;
                             }
                           ),
                         SizedBox(height: 30,),
