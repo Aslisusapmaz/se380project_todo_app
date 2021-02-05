@@ -1,57 +1,50 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
-import 'package:provider/provider.dart';
-import 'package:se380_project_todo_app/models/authentication.dart';
 import 'home_screen.dart';
+
 class SignupScreen extends StatefulWidget {
-  static const routeName='/signup';
+  static const routeName = '/signup';
   @override
   _SignupScreenState createState() => _SignupScreenState();
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final GlobalKey<FormState> _formKey=GlobalKey();
-  TextEditingController _passwordController= new TextEditingController();
-  Map<String, String>_authData={
-    'email':'',
-    'password':''
-  };
-  void _showErrorDialog(String message){
-    showDialog(context:context,
-        builder: (context)=>AlertDialog(
-          title: Text('An Error Occured'),
-          content:Text(message),
-          actions:<Widget> [
-            FlatButton(
-              child: Text('Okay'),
-              onPressed: (){
-                Navigator.of(context).pop();
-              },
-            )
-          ],
-        )
-    );
+  final GlobalKey<FormState> _formKey = GlobalKey();
+  TextEditingController _passwordController = new TextEditingController();
+  Map<String, String> _authData = {'email': '', 'password': ''};
+  void _showErrorDialog(String message) {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text('An Error Occured'),
+              content: Text(message),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Okay'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            ));
   }
 
-  Future<void> _done() async
-  {
-  if(!_formKey.currentState.validate())
-    {
+  Future<void> _done() async {
+    if (!_formKey.currentState.validate()) {
       return;
     }
-  _formKey.currentState.save();
-  try{
-    await Provider.of<Authentication>(context,listen:false).signup(
-        _authData['email'],
-        _authData['password']
-    );
-    Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
-  }catch(error)
-  {
-    var errorMessage='Authentication Failed. Please try again later.';
-    _showErrorDialog(errorMessage);
+    _formKey.currentState.save();
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _authData["email"], password: _authData["password"]);
+      Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+    } catch (error) {
+      var errorMessage = 'Authentication Failed. Please try again later.';
+      _showErrorDialog(errorMessage);
+    }
   }
-  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,16 +53,11 @@ class _SignupScreenState extends State<SignupScreen> {
         actions: <Widget>[
           FlatButton(
             child: Row(
-              children:<Widget> [
-                Text('Login'),
-                Icon(Icons.person)
-
-              ],
+              children: <Widget>[Text('Login'), Icon(Icons.person)],
             ),
             textColor: Colors.white,
             onPressed: () {
               Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
-
             },
           )
         ],
@@ -78,13 +66,10 @@ class _SignupScreenState extends State<SignupScreen> {
         children: <Widget>[
           Container(
             decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: [
-                      Colors.redAccent,
-                      Colors.blue,
-                    ]
-                )
-            ),
+                gradient: LinearGradient(colors: [
+              Colors.redAccent,
+              Colors.blue,
+            ])),
           ),
           Center(
             child: Card(
@@ -103,63 +88,47 @@ class _SignupScreenState extends State<SignupScreen> {
                         TextFormField(
                           decoration: InputDecoration(labelText: 'Email'),
                           keyboardType: TextInputType.emailAddress,
-                          validator: (value)
-                          {
-                            if(value.isEmpty || !value.contains('@'))
-                            {
+                          validator: (value) {
+                            if (value.isEmpty || !value.contains('@')) {
                               return 'invalid email';
                             }
                             return null;
                           },
-                          onSaved: (value)
-                          {
-                            _authData['email']=value;
-
+                          onSaved: (value) {
+                            _authData['email'] = value;
                           },
-
                         ),
                         TextFormField(
-                            decoration: InputDecoration(
-                                labelText: 'Password'),
-                            controller: _passwordController ,
-                            obscureText:true,
-                            validator:(value)
-                            {
-                              if(value.isEmpty || value.length<=5)
-                              {
+                            decoration: InputDecoration(labelText: 'Password'),
+                            controller: _passwordController,
+                            obscureText: true,
+                            validator: (value) {
+                              if (value.isEmpty || value.length <= 5) {
                                 return 'invalid password';
                               }
                               return null;
-
                             },
-                            onSaved:(value)
-                            {
-                              _authData['password']=value;
-
-                            }
-                        ),
+                            onSaved: (value) {
+                              _authData['password'] = value;
+                            }),
                         TextFormField(
-                            decoration: InputDecoration(
-                                labelText: 'Confirm Password'),
-                            obscureText:true,
-                            validator:(value)
-                            {
-                              if(value.isEmpty || value !=_passwordController.text)
-                              {
+                            decoration:
+                                InputDecoration(labelText: 'Confirm Password'),
+                            obscureText: true,
+                            validator: (value) {
+                              if (value.isEmpty ||
+                                  value != _passwordController.text) {
                                 return 'invalid password';
                               }
                               return null;
-
                             },
-                            onSaved:(value)
-                            {
-
-                            }
+                            onSaved: (value) {}),
+                        SizedBox(
+                          height: 30,
                         ),
-                        SizedBox(height: 30,),
                         RaisedButton(
-                          child:Text('Done'),
-                          onPressed: (){
+                          child: Text('Done'),
+                          onPressed: () {
                             _done();
                           },
                           shape: RoundedRectangleBorder(
@@ -169,7 +138,6 @@ class _SignupScreenState extends State<SignupScreen> {
                           textColor: Colors.white,
                         )
                       ],
-
                     ),
                   ),
                 ),
