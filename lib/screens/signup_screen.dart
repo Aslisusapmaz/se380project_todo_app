@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'landing_screen.dart';
 import 'login_screen.dart';
 import 'home_screen.dart';
 
@@ -38,7 +39,7 @@ class _SignupScreenState extends State<SignupScreen> {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _authData["email"], password: _authData["password"]);
-      Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>LandingScreen()));
     } catch (error) {
       var errorMessage = 'Authentication Failed. Please try again later.';
       _showErrorDialog(errorMessage);

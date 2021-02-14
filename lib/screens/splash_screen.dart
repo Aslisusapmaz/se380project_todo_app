@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:se380_project_todo_app/screens/home_screen.dart';
 import 'package:se380_project_todo_app/screens/login_screen.dart';
 
+import 'landing_screen.dart';
+
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -19,8 +21,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _asyncInit() async {
     await Firebase.initializeApp();
     bool isLoggedIn = FirebaseAuth.instance.currentUser != null;
-    Navigator.of(context).popAndPushNamed(
-        isLoggedIn ? HomeScreen.routeName : LoginScreen.routeName);
+    if(isLoggedIn)
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>LandingScreen()));
+    else
+      Navigator.of(context).popAndPushNamed(LoginScreen.routeName);
   }
 
   @override
