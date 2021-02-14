@@ -3,6 +3,7 @@ import 'package:motion_tab_bar/MotionTabBarView.dart';
 import 'package:motion_tab_bar/MotionTabController.dart';
 import 'package:motion_tab_bar/motiontabbar.dart';
 import 'package:se380_project_todo_app/screens/home_screen.dart';
+import 'package:se380_project_todo_app/screens/profile_screen.dart';
 
 class LandingScreen extends StatefulWidget {
   @override
@@ -28,6 +29,7 @@ class _LandingScreenState extends State<LandingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
         bottomNavigationBar: MotionTabBar(
           labels: ["Home","Profile"],
           initialSelectedTab: "Home",
@@ -48,7 +50,7 @@ class _LandingScreenState extends State<LandingScreen>
             HomeScreen(),
             Container(
               child: Center(
-                child: Text("Profile"),
+                child: ProfileScreen(),
               ),
             ),
           ],

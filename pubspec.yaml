@@ -28,6 +28,7 @@ dependencies:
   firebase_core: ^0.7.0
   table_calendar: ^2.3.3
   motion_tab_bar: ^0.1.5
+  shared_preferences: ^0.5.12+4
 
 
 
